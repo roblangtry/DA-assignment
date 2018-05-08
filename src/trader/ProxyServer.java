@@ -17,7 +17,6 @@ public class ProxyServer  extends Thread{
             System.out.println("[ \u001B[36mproxy\u001B[0m ] Accepting connections");
             while(this.running){
                 try{
-                    System.out.println("[ \u001B[36mproxy\u001B[0m ] wait");
                     new ProxyConnection(this.trader, this.server.accept(), this).start();
                     System.out.println("[ \u001B[36mproxy\u001B[0m ] New connection setup!");
                 } catch(SocketTimeoutException e) {
@@ -30,6 +29,12 @@ public class ProxyServer  extends Thread{
         System.out.println("[ \u001B[36mproxy\u001B[0m ] Shut down");
     }
     public void shutoff(){
+        try{
+            this.server.close();
+        } catch(IOException e){
+            //
+        }
         this.running = false;
+        this.interrupt();
     }
 }

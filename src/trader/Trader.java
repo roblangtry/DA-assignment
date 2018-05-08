@@ -625,7 +625,7 @@ public class Trader implements ITrader{
     this.loop.start();
     //swer
    }
-   public void downgrade(String server){
+   public void downgrade(){
     if(remote)return;
     this.remote = true;
     try {
@@ -640,12 +640,25 @@ public class Trader implements ITrader{
     }
     this.loop.shutoff();
     this.connection.shutoff();
-
+    System.out.println("[ \u001B[36minternal\u001B[0m ][ \u001B[33mdowngrade\u001B[0m ]");
    }
    public boolean coord(){
     return !this.remote;
    }
    public void relocate(String server) throws IOException{
+    ConnectionModule conn;
+    System.out.println("[ \u001B[36minternal\u001B[0m ][ \u001B[33mrelocate\u001B[0m ] Relocating RemoteTrader to \"" + server + "\"");
+    if(this.remote_trader == null){
+      try{
+        conn = new ConnectionModule(server);
+      } catch(IOException e){
+        System.out.println("Mueller");
+        conn = null;
+      }
+        System.out.println("A");
+      this.remote_trader = new RemoteTrader(this, conn, this.serverport);
+        System.out.println("B");
+    }
     this.remote_trader.relocate(server);
    }
    public void election(char type){

@@ -23,6 +23,6 @@ public class MarketLoop extends Thread {
         }
     }
     public void shutoff(){
-        this.running = false;
+        this.interrupt();
     }
 }
