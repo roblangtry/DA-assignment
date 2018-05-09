@@ -3,6 +3,7 @@ package trader;
 import java.io.*;
 import java.net.*;
 import algorithms.*;
+import java.util.*;
 public class ProxyConnection extends Thread{
     Socket socket;
     ProxyServer proxy_server;
@@ -25,14 +26,21 @@ public class ProxyConnection extends Thread{
         char command;
         String message;
         int balance;
+        String[] servers;
+        int target;
         try {
-            System.out.println("[ \u001B[36mproxy\u001B[0m ] Variables prepared for connection");
+            // System.out.println("[ \u001B[36mproxy\u001B[0m ] Variables prepared for connection");
             missive = this.connection.receive();
             message = missive.substring(1);
+            try {
+                Thread.sleep(100);
+            } catch(InterruptedException e){
+                //do nothing
+            }
             switch(missive.charAt(0)){
                 case 'C':
                     this.connection.send("C");
-                    System.out.println("[ \u001B[36mproxy\u001B[0m ] Sent connection message");
+                    // System.out.println("[ \u001B[36mproxy\u001B[0m ] Sent connection message");
                     this.trader.addServer(this.connection.receive());
                     running = true;
                     break;
@@ -67,6 +75,47 @@ public class ProxyConnection extends Thread{
                     connection.close();
                     System.out.println("[ \u001B[36mwatcher\u001B[0m ][ \u001B[33melection\u001B[0m ] Initiating own election message round");
                     new Bully().selectNewHost(this.trader);
+                case 'q':
+                    servers = trader.getServers();
+                    target = Arrays.asList(servers).indexOf(trader.self()) - 1;
+                    if(target == -1)
+                        target = servers.length - 1;
+                    System.out.println("[ \u001B[36mChangRoberts\u001B[0m ] Receiving ring probe from \"" + message.split("~")[0] + "\"");
+                    if(message.split("~")[1].equals(this.trader.self())){
+                        System.out.println("[ \u001B[36mChangRoberts\u001B[0m ] Sending ring target to \"" + servers[target] + "\"");
+                        connection = new ConnectionModule(servers[target]);
+                        connection.send("Q" + trader.self()+"~"+trader.self());
+                        connection.close();
+                        new ChangRoberts().upgradeHost(this.trader);
+                    }
+                    else{
+                        System.out.println("[ \u001B[36mChangRoberts\u001B[0m ] Sending ring probe to \"" + servers[target] + "\"");
+                        connection = new ConnectionModule(servers[target]);
+                        if(ChangRoberts.determine_value(message.split("~")[1]) < ChangRoberts.determine_value(trader.self()))
+                            connection.send("q" + trader.self()+"~"+trader.self());
+                        else
+                            connection.send("q" + trader.self()+"~"+message.split("~")[1]);
+                        connection.close();
+                    }
+                    break;
+                case 'Q':
+                    servers = trader.getServers();
+                    target = Arrays.asList(servers).indexOf(trader.self()) - 1;
+                    if(target == -1)
+                        target = servers.length - 1;
+                    System.out.println("[ \u001B[36mChangRoberts\u001B[0m ] Receiving ring target from \"" + message.split("~")[0] + "\"");
+                    if(message.split("~")[1].equals(trader.self())){
+                        System.out.println("[ \u001B[36mChangRoberts\u001B[0m ] Finished");
+                    }
+                    else{
+                        System.out.println("[ \u001B[36mChangRoberts\u001B[0m ] Sending ring target to \"" + servers[target] + "\"");
+                        connection = new ConnectionModule(servers[target]);
+                        connection.send("Q" + trader.self()+"~"+message.split("~")[1]);
+                        connection.close();
+                        trader.downgrade();
+                        trader.relocate(message.split("~")[1]);
+                    }
+                    break;
                 default:
                     this.connection.send("D");
                     this.connection.close();

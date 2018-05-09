@@ -21,6 +21,7 @@ public class ConnectionModule {
         this.port = port;
     }
     public ConnectionModule(String address_and_port) throws IOException{
+        if(address_and_port == null || address_and_port.split(":").length <2) throw new IOException();
         String address = address_and_port.split(":")[0];
         int port = Integer.parseInt(address_and_port.split(":")[1]);
         this.socket = new Socket(address, port);

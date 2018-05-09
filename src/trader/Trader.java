@@ -60,12 +60,12 @@ public class Trader implements ITrader{
       this.accounts_semaphore = new Semaphore(1);
       this.user_inventory_semaphore = new Semaphore(1);
       this.server_semaphore = new Semaphore(1);
-      System.out.println("[ \u001B[36minternal\u001B[0m ] Connecting to remote trader");
+      // System.out.println("[ \u001B[36minternal\u001B[0m ] Connecting to remote trader");
       try {
         this.remote_trader = new RemoteTrader(this, new ConnectionModule(hostAddress, hostPort), serverport);
-        System.out.println("[ \u001B[36minternal\u001B[0m ] Remote trader connected!");
+        // System.out.println("[ \u001B[36minternal\u001B[0m ] Remote trader connected!");
       } catch (IOException e) {
-        System.out.println("[ \u001B[36minternal\u001B[0m ] Remote trader refuced connection!");
+        // System.out.println("[ \u001B[36minternal\u001B[0m ] Remote trader refuced connection!");
       }
       // Setup a main server
     }
@@ -79,7 +79,7 @@ public class Trader implements ITrader{
       for(String key : this.inventory.keySet()){
         l.add(new ListEntry(key, this.inventory.get(key)));
       }
-      System.out.println("[ \u001B[36mclient\u001B[0m ][ \u001B[33mlist\u001B[0m ]");
+      // System.out.println("[ \u001B[36mclient\u001B[0m ][ \u001B[33mlist\u001B[0m ]");
       return l.toArray(new ListEntry[l.size()]);
     }
     public ListEntry[] list() throws TraderException{
@@ -103,14 +103,14 @@ public class Trader implements ITrader{
               acc = this.accounts.get(user_id);
               inventoryQuantity = oQuantity;
               if(inventoryQuantity < quantity){
-                System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[33m" + user_id + "\u001B[0m ][ \u001B[32mbuy\u001B[0m ] %s attempted to buy %d %s, not enough quantity exists in system\n", user_id, quantity, item_id);
+                // System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[33m" + user_id + "\u001B[0m ][ \u001B[32mbuy\u001B[0m ] %s attempted to buy %d %s, not enough quantity exists in system\n", user_id, quantity, item_id);
                 this.user_inventory_semaphore.release();
                 this.accounts_semaphore.release();
                 this.inventory_semaphore.release();
                 throw new InventoryException();
               }
               if(price * quantity > acc){
-                System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[33m" + user_id + "\u001B[0m ][ \u001B[32mbuy\u001B[0m ] %s attempted to buy %d %s, not enough quantity exists in system\n", user_id, quantity, item_id);
+                // System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[33m" + user_id + "\u001B[0m ][ \u001B[32mbuy\u001B[0m ] %s attempted to buy %d %s, not enough quantity exists in system\n", user_id, quantity, item_id);
                 this.user_inventory_semaphore.release();
                 this.accounts_semaphore.release();
                 this.inventory_semaphore.release();
@@ -127,11 +127,11 @@ public class Trader implements ITrader{
                 inv.put(item_id, quantity);
               }
               this.user_inventory.put(user_id, inv);
-              System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[33m" + user_id + "\u001B[0m ][ \u001B[32mbuy\u001B[0m ] %s bought %d %s, total quantity available now is %d\n", user_id, quantity, item_id, oQuantity);
+              // System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[33m" + user_id + "\u001B[0m ][ \u001B[32mbuy\u001B[0m ] %s bought %d %s, total quantity available now is %d\n", user_id, quantity, item_id, oQuantity);
               pushUser(user_id, item_id);
               pushProduct(item_id);
             } catch (NullPointerException e){
-              System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[33m" + user_id + "\u001B[0m ][ \u001B[32mbuy\u001B[0m ] %s attempted to buy %d %s, this product does not exist in the system\n", user_id, quantity, item_id);
+              // System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[33m" + user_id + "\u001B[0m ][ \u001B[32mbuy\u001B[0m ] %s attempted to buy %d %s, this product does not exist in the system\n", user_id, quantity, item_id);
               this.user_inventory_semaphore.release();
               this.accounts_semaphore.release();
               this.inventory_semaphore.release();
@@ -166,14 +166,14 @@ public class Trader implements ITrader{
             try{
               val = inv.get(item_id);
             } catch(NullPointerException e){
-              System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[33m" + user_id + "\u001B[0m ][ \u001B[31msell\u001B[0m ] Couldn't sell %d %s, User has no %s\n", quantity, item_id, item_id);
+              // System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[33m" + user_id + "\u001B[0m ][ \u001B[31msell\u001B[0m ] Couldn't sell %d %s, User has no %s\n", quantity, item_id, item_id);
               this.user_inventory_semaphore.release();
               this.accounts_semaphore.release();
               this.inventory_semaphore.release();
               throw new MissingQuantityException();
             }
             if(val < quantity){
-              System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[33m" + user_id + "\u001B[0m ][ \u001B[31msell\u001B[0m ] Couldn't sell %d %s, User doesn't have required quantity\n", quantity, item_id);
+              // System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[33m" + user_id + "\u001B[0m ][ \u001B[31msell\u001B[0m ] Couldn't sell %d %s, User doesn't have required quantity\n", quantity, item_id);
               this.user_inventory_semaphore.release();
               this.accounts_semaphore.release();
               this.inventory_semaphore.release();
@@ -190,7 +190,7 @@ public class Trader implements ITrader{
               inventoryQuantity = quantity;
             }
             this.inventory.put(item_id, inventoryQuantity);
-            System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[33m" + user_id + "\u001B[0m ][ \u001B[31msell\u001B[0m ] Selling %d %s, total quantity available now is %d\n", quantity, item_id, inventoryQuantity);
+            // System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[33m" + user_id + "\u001B[0m ][ \u001B[31msell\u001B[0m ] Selling %d %s, total quantity available now is %d\n", quantity, item_id, inventoryQuantity);
             pushUser(user_id, item_id);
             pushProduct(item_id);
             this.user_inventory_semaphore.release();
@@ -239,13 +239,13 @@ public class Trader implements ITrader{
         this.user_inventory_semaphore.acquire();
         try {
           val = this.accounts.get(user_id);
-          System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[31mregistration\u001B[0m ] User \"" + user_id + "\" already exists\n");
+          // System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[31mregistration\u001B[0m ] User \"" + user_id + "\" already exists\n");
         } catch (NullPointerException e){
           this.accounts.put(user_id, 100);
           map = new HashMap<String,Integer>();
           map.put(item_ids[0],0);
           this.user_inventory.put(user_id, map);
-          System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[31mregistration\u001B[0m ] User \"" + user_id + "\" setup with 100 credits\n");
+          // System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[31mregistration\u001B[0m ] User \"" + user_id + "\" setup with 100 credits\n");
           pushUser(user_id, item_ids[0]);
         }
       } catch (InterruptedException e){
@@ -256,7 +256,7 @@ public class Trader implements ITrader{
       }
     } catch (InterruptedException e){
       this.accounts_semaphore.release();
-      System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[31mregistration\u001B[0m ] registration of user with \"" + user_id + "\" failed\n");
+      // System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[31mregistration\u001B[0m ] registration of user with \"" + user_id + "\" failed\n");
       throw new InternalTraderException();
     } finally {
       this.accounts_semaphore.release();
@@ -278,7 +278,7 @@ public class Trader implements ITrader{
     for(String key : this.user_inventory.get(user_id).keySet()){
       l.add(new ListEntry(key, this.user_inventory.get(user_id).get(key)));
     }
-    System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[33m" + user_id + "\u001B[0m ][ \u001B[31minventory\u001B[0m ]\n");
+    // System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[33m" + user_id + "\u001B[0m ][ \u001B[31minventory\u001B[0m ]\n");
     return l.toArray(new ListEntry[l.size()]);
    }
    public ListEntry[] inventory(String user_id) throws TraderException{
@@ -291,7 +291,7 @@ public class Trader implements ITrader{
       for(String key : this.prices.keySet()){
         l.add(new ListEntry(key, this.prices.get(key)));
       }
-      System.out.println("[ \u001B[36mclient\u001B[0m ][ \u001B[33mprices\u001B[0m ]");
+      // System.out.println("[ \u001B[36mclient\u001B[0m ][ \u001B[33mprices\u001B[0m ]");
       return l.toArray(new ListEntry[l.size()]);
    }
    public ListEntry[] prices() throws TraderException{
@@ -300,7 +300,7 @@ public class Trader implements ITrader{
 
 
    public int balance_order(String user_id) throws TraderException{
-    System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[33m" + user_id + "\u001B[0m ][ \u001B[31mbalance\u001B[0m ]\n");
+    // System.out.printf("[ \u001B[36mclient\u001B[0m ][ \u001B[33m" + user_id + "\u001B[0m ][ \u001B[31mbalance\u001B[0m ]\n");
     int balance = 0;
     try{
       balance = accounts.get(user_id);
@@ -321,7 +321,7 @@ public class Trader implements ITrader{
       val = val + rand.nextInt(4) - 1;
       this.prices.put(id, val);
     }
-    System.out.printf("[ \u001B[36mmarket\u001B[0m ][ \u001B[33mpricing\u001B[0m ] Update\n");
+    // System.out.printf("[ \u001B[36mmarket\u001B[0m ][ \u001B[33mpricing\u001B[0m ] Update\n");
     pushPrices();
    }
    public void inventory_update(){
@@ -334,7 +334,7 @@ public class Trader implements ITrader{
       this.inventory.put(id, val);
       if(oval != val) pushProduct(id);
     }
-    System.out.printf("[ \u001B[36mmarket\u001B[0m ][ \u001B[33minventory\u001B[0m ] Update\n");
+    // System.out.printf("[ \u001B[36mmarket\u001B[0m ][ \u001B[33minventory\u001B[0m ] Update\n");
    }
    public void accounts_set(String message){
     String[] split = message.split("~");
@@ -394,63 +394,63 @@ public class Trader implements ITrader{
     }
    }
    public void addServer(String server){
-    System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Adding server \"" + server + "\"");
+    // System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Adding server \"" + server + "\"");
       try{
     String[] split = server.split(":");
     String address = split[0];
     int port = Integer.parseInt(split[1]);
     String message;
     HashMap<String, Integer> map;
-    System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Establishing Connection");
+    // System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Establishing Connection");
     ConnectionModule connection = new ConnectionModule(address, port);
-    System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Connection Established");
+    // System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Connection Established");
     try{
       this.accounts_semaphore.acquire();
-      System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Transmitting Accounts data");
+      // System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Transmitting Accounts data");
       for(String key : accounts.keySet()){
-        System.out.println(key);
+        // System.out.println(key);
         connection.send("A" + key + "~" + accounts.get(key));
       }
-      System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Transmitted Accounts data");
+      // System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Transmitted Accounts data");
       this.accounts_semaphore.release();
     } catch(InterruptedException e){
-      System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Error transmitting Accounts data");
+      // System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Error transmitting Accounts data");
       this.accounts_semaphore.release();
     }
     try{
       this.user_inventory_semaphore.acquire();
-      System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Transmitting User Inventory data");
+      // System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Transmitting User Inventory data");
       for(String k1 : user_inventory.keySet()){
         for(String k2 : user_inventory.get(k1).keySet()){
           connection.send("U" + k1 + "~" + k2 + "~" + user_inventory.get(k1).get(k2));
         }
       }
-      System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Transmitted User Inventory data");
+      // System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Transmitted User Inventory data");
       this.user_inventory_semaphore.release();
     } catch(InterruptedException e){
-      System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Error transmitting User Inventory data");
+      // System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Error transmitting User Inventory data");
       this.user_inventory_semaphore.release();
     }
     try{
       this.inventory_semaphore.acquire();
-      System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Transmitting Inventory data");
+      // System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Transmitting Inventory data");
       for(String key : inventory.keySet()){
         connection.send("I" + key + "~" + inventory.get(key));
       }
-      System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Transmitted Inventory data");
+      // System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Transmitted Inventory data");
       this.inventory_semaphore.release();
     } catch(InterruptedException e){
-      System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Error transmitting Inventory data");
+      // System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Error transmitting Inventory data");
       this.inventory_semaphore.release();
     }
-    System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Transmitting Prices data");
+    // System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Transmitting Prices data");
     message = "";
     for(String s : item_ids){
       message = message + this.prices.get(s) + "~";
     }
     connection.send("P" + message);
-    System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Transmitted Prices data");
-    System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Ending Connection");
+    // System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Transmitted Prices data");
+    // System.out.println("[ \u001B[36mproxy\u001B[0m ][ \u001B[33madd\u001B[0m ] Ending Connection");
     connection.send("E");
     try{
       this.server_semaphore.acquire();
@@ -463,7 +463,7 @@ public class Trader implements ITrader{
     connection.close();
     pushServers();
       } catch(IOException e){
-        System.out.println("error");
+        // System.out.println("error");
       }
    }
    private void pushServers(){
@@ -491,7 +491,7 @@ public class Trader implements ITrader{
           connection.send("E");
           connection.close();
         } catch(IOException e){
-          System.out.println("error");
+          // System.out.println("error");
         }
       }
     }
@@ -513,7 +513,7 @@ public class Trader implements ITrader{
         connection.send("E");
         connection.close();
       } catch(IOException e){
-        System.out.println("error");
+        // System.out.println("error");
       }
     }
    }
@@ -534,7 +534,7 @@ public class Trader implements ITrader{
         connection.send("E");
         connection.close();
       } catch(IOException e){
-        System.out.println("error");
+        // System.out.println("error");
       }
     }
    }
@@ -557,7 +557,7 @@ public class Trader implements ITrader{
         connection.send("E");
         connection.close();
       } catch(IOException e){
-        System.out.println("error");
+        // System.out.println("error");
       }
     }
    }
@@ -580,7 +580,7 @@ public class Trader implements ITrader{
         connection.send("E");
         connection.close();
       } catch(IOException e){
-        System.out.println("error");
+        // System.out.println("error");
       }
     }
    }
@@ -640,24 +640,24 @@ public class Trader implements ITrader{
     }
     this.loop.shutoff();
     this.connection.shutoff();
-    System.out.println("[ \u001B[36minternal\u001B[0m ][ \u001B[33mdowngrade\u001B[0m ]");
+    // System.out.println("[ \u001B[36minternal\u001B[0m ][ \u001B[33mdowngrade\u001B[0m ]");
    }
    public boolean coord(){
     return !this.remote;
    }
    public void relocate(String server) throws IOException{
     ConnectionModule conn;
-    System.out.println("[ \u001B[36minternal\u001B[0m ][ \u001B[33mrelocate\u001B[0m ] Relocating RemoteTrader to \"" + server + "\"");
+    // System.out.println("[ \u001B[36minternal\u001B[0m ][ \u001B[33mrelocate\u001B[0m ] Relocating RemoteTrader to \"" + server + "\"");
     if(this.remote_trader == null){
       try{
         conn = new ConnectionModule(server);
       } catch(IOException e){
-        System.out.println("Mueller");
+        // System.out.println("Mueller");
         conn = null;
       }
-        System.out.println("A");
+        // System.out.println("A");
       this.remote_trader = new RemoteTrader(this, conn, this.serverport);
-        System.out.println("B");
+        // System.out.println("B");
     }
     this.remote_trader.relocate(server);
    }
@@ -673,8 +673,10 @@ public class Trader implements ITrader{
           new EnhancedBully().selectNewHost(this);
           break;
         case 'C':
+          new ChangRoberts().selectNewHost(this);
           break;
         case 'F':
+          // new Franklin().selectNewHost(this);
           break;
       }
    }

@@ -94,7 +94,7 @@ public class EnhancedBully extends AbstractAlgorithm{
             }
             return;
         }
-        if(denials == 0){
+        if(denials == 0 && trader.coord() == false){
             try{
                 trader.upgrade();
             } catch (IOException e){
@@ -113,7 +113,7 @@ public class EnhancedBully extends AbstractAlgorithm{
                 }
             }
         }
-        else {
+        else if(denials>0){
             try{
                 connection = new ConnectionModule(largest);
                 connection.send("N" + trader.self());

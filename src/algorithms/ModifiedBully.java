@@ -66,7 +66,7 @@ public class ModifiedBully extends AbstractAlgorithm{
                     }
                 }
             }
-        } else {
+        } else if(denials >0) {
             try{
                 System.out.println("[ \u001B[36mModifiedBully\u001B[0m ] Sending GRANT notice to \"" + highest + "\"");
                 connection = new ConnectionModule(highest);

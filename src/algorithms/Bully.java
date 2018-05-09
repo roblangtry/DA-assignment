@@ -18,11 +18,13 @@ public class Bully extends AbstractAlgorithm{
                     denials = denials + 1;
                     System.out.println("[ \u001B[36mBully\u001B[0m ] Recieved denial from \"" + s + "\"");
                 }catch (IOException e){
+                    
                     trader.removeServer(s);
                 }
             }
         }
         if(denials == 0 && trader.coord() == false){
+            System.out.println("[ \u001B[36mBully\u001B[0m ] Won election");
             try{
                 trader.upgrade();
             } catch (IOException e){
