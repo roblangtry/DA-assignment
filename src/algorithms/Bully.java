@@ -14,11 +14,11 @@ public class Bully extends AbstractAlgorithm{
                     System.out.println("[ \u001B[36mBully\u001B[0m ] Sending election notice to \"" + s + "\"");
                     connection = new ConnectionModule(s);
                     connection.send("e" + trader.self());
-                    connection.receive(10000);
+                    connection.receive();
                     denials = denials + 1;
                     System.out.println("[ \u001B[36mBully\u001B[0m ] Recieved denial from \"" + s + "\"");
                 }catch (IOException e){
-                    
+
                     trader.removeServer(s);
                 }
             }
