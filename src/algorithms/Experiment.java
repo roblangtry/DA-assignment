@@ -6,6 +6,6 @@ public abstract class Experiment{
     public static boolean CONNECTION_ELECTIONS = true;
     public static boolean DEBUG_CONNECTIONS = false;
     public static AbstractAlgorithm FAILURE_ALGORITHM = new Bully();
-    public static AbstractAlgorithm PERIODIC_ALGORITHM = new ChangRoberts();
+    public static AbstractAlgorithm PERIODIC_ALGORITHM = new Franklin();
     public static AbstractAlgorithm CONNECTION_ALGORITHM = new ChangRoberts();
 }
