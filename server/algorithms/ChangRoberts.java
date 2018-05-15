@@ -22,7 +22,7 @@ public class ChangRoberts extends AbstractAlgorithm{
     public static String getLeft(Trader trader){
         String[] servers = trader.getServers();
         int target = Arrays.asList(servers).indexOf(trader.self()) - 1;
-        if(target == -1)
+        if(target < 0)
             target = servers.length - 1;
         return servers[target];
     }

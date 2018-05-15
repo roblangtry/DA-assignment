@@ -13,10 +13,10 @@ public class RemoteTrader implements ITrader {
         String addr;
         int port;
         boolean hope = true;
+        boolean election_on_connect = (Franklin.determine_value(conn_module.getAddress()) < Franklin.determine_value(trader.self()));
         this.connection = conn_module;
         this.trader = trader;
         this.watcher = new Watcher(trader,serverport);
-        this.watcher.start();
         while(hope){
             hope = false;
             this.connection.send("C");
@@ -31,9 +31,14 @@ public class RemoteTrader implements ITrader {
                 this.connection.send("E");
                 this.connection.close();
                 this.connection = new ConnectionModule(connectMessage.substring(1));
+                election_on_connect = (Franklin.determine_value(connectMessage.substring(1)) < Franklin.determine_value(trader.self()));
                 hope = true;
             }
         }
+        if (election_on_connect && Experiment.CONNECTION_ELECTIONS){
+            this.watcher.callForElections();
+        }
+        this.watcher.start();
 
     }
     public ProxyServer convertProxy() throws IOException{

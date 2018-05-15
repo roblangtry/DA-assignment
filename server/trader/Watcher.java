@@ -4,20 +4,26 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 public class Watcher  extends Thread{
-    ServerSocket server;
-    Trader trader;
-    boolean running;
+    private ServerSocket server;
+    private Trader trader;
+    private boolean running;
+    private boolean callElections;
+    private boolean electionPossible;
     public Watcher(Trader trader, int hostPort) throws IOException{
         this.server = new ServerSocket(hostPort);
         this.server.setSoTimeout(Experiment.SERVER_REFRESH_RATE);
         this.trader = trader;
         this.running = true;
+        this.callElections = false;
+        this.electionPossible = false;
     }
     public Watcher(Trader trader, ServerSocket serverSocket) throws IOException{
         this.server = serverSocket;
         this.server.setSoTimeout(Experiment.SERVER_REFRESH_RATE);
         this.trader = trader;
         this.running = true;
+        this.callElections = false;
+        this.electionPossible = false;
     }
     public void run(){
         Socket socket;
@@ -34,6 +40,9 @@ public class Watcher  extends Thread{
                 this.running = false;
             }
         }
+    }
+    public void callForElections(){
+        this.callElections = true;
     }
     public ProxyServer convert() throws IOException{
         this.running = false;
@@ -165,6 +174,7 @@ public class Watcher  extends Thread{
                     case 'S':
                         // System.out.println("[ \u001B[36mwatcher\u001B[0m ][ \u001B[33mservers\u001B[0m ] Update");
                         this.trader.servers_set(message);
+                        this.electionPossible = true;
                         break;
                     case 'C':
                         // System.out.println("[ \u001B[36mwatcher\u001B[0m ][ \u001B[33mredirect\u001B[0m ] Received a connection request, Redirecting..");
@@ -257,6 +267,10 @@ public class Watcher  extends Thread{
                     case 'E': // end connection
                         // System.out.println("[ \u001B[36mwatcher\u001B[0m ] Closed Connection");
                         reading = false;
+                        if(this.callElections && this.electionPossible){
+                            this.callElections = false;
+                            Experiment.CONNECTION_ALGORITHM.callElection(this.trader);
+                        }
                         break;
                 }
             }
