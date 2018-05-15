@@ -61,7 +61,7 @@ public class Watcher  extends Thread{
             while(reading){
                 raw = connection.receive();
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(Experiment.MESSAGE_DELAY);
                 } catch(InterruptedException e){
                     //do nothing
                 }

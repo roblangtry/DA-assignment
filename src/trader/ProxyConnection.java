@@ -84,11 +84,16 @@ public class ProxyConnection extends Thread{
                     System.out.println("[ \u001B[36mChangRoberts\u001B[0m ] Receiving ring probe from \"" + message.split("~")[0] + "\"");
                     System.out.println("MSG: " + message);
                     if(message.split("~").length >= 2 && message.split("~")[1].equals(this.trader.self())){
-                        System.out.println("[ \u001B[36mChangRoberts\u001B[0m ] Sending ring target to \"" + servers[target] + "\"");
-                        connection = new ConnectionModule(servers[target]);
-                        connection.send("Q" + trader.self()+"~"+trader.self());
-                        connection.close();
-                        new ChangRoberts().upgradeHost(this.trader);
+                        // only update others target if we are not currently the leader
+                        if(!this.trader.isLeader()){
+                            System.out.println("[ \u001B[36mChangRoberts\u001B[0m ] Sending ring target to \"" + servers[target] + "\"");
+                            connection = new ConnectionModule(servers[target]);
+                            connection.send("Q" + trader.self()+"~"+trader.self());
+                            connection.close();
+                            new ChangRoberts().upgradeHost(this.trader);
+                        } else{
+                            System.out.println("[ \u001B[36mChangRoberts\u001B[0m ] Finished");
+                        }
                     }
                     else{
                         System.out.println("[ \u001B[36mChangRoberts\u001B[0m ] Sending ring probe to \"" + servers[target] + "\"");
