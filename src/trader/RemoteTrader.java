@@ -27,12 +27,10 @@ public class RemoteTrader implements ITrader {
                 this.connection.send(trader.self());
                 // System.out.println("[ \u001B[36minternal\u001B[0m ] Remote trader connection established");
             } else if(connectMessage.charAt(0) == 'R'){
-                addr = connectMessage.substring(1).split("~")[0];
-                port = Integer.parseInt(connectMessage.substring(1).split("~")[1]);
-                // System.out.println("[ \u001B[36minternal\u001B[0m ] Received a redirect now attempting connection to " +addr + ":" + port);
+                System.out.println("[ \u001B[36minternal\u001B[0m ] Received a redirect now attempting connection to " +connectMessage);
                 this.connection.send("E");
                 this.connection.close();
-                this.connection = new ConnectionModule(addr, port);
+                this.connection = new ConnectionModule(connectMessage.substring(1));
                 hope = true;
             }
         }
@@ -42,6 +40,9 @@ public class RemoteTrader implements ITrader {
       ProxyServer proxy = this.watcher.convert();
       this.watcher = null;
       return proxy;
+    }
+    public String getLeader(){
+        return this.connection.getAddress();
     }
     public void shutoff(){
         if(this.watcher != null)

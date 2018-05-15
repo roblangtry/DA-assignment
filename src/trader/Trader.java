@@ -73,6 +73,9 @@ public class Trader implements ITrader{
       this.connection = this.remote_trader.convertProxy();
       this.connection.start();
     }
+    public String getLeader(){
+      return this.remote_trader.getLeader();
+    }
     public void setupProxy() throws IOException{
       this.connection = new ProxyServer(this, this.serverport);
       this.connection.start();

@@ -25,6 +25,7 @@ public class Watcher  extends Thread{
         while(this.running){
             try{
                 socket = this.server.accept();
+                socket.setSoTimeout(Experiment.LONG_DELAY);
                 // System.out.println("[ \u001B[36mwatcher\u001B[0m ] Received connection");
                 this.processInput(socket);
             }catch(SocketTimeoutException e){
@@ -167,7 +168,9 @@ public class Watcher  extends Thread{
                         break;
                     case 'C':
                         // System.out.println("[ \u001B[36mwatcher\u001B[0m ][ \u001B[33mredirect\u001B[0m ] Received a connection request, Redirecting..");
-                        connection.sendRedirect();
+                        connection.send("R" + this.trader.getLeader());
+                        connection.close();
+                        reading = false;
                         break;
                     case 'c': //Co-ordinator message
                         System.out.println("[ \u001B[36mwatcher\u001B[0m ][ \u001B[33mcoordinate\u001B[0m ] Received a Coordination request to move to " + message);

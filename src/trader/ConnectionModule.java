@@ -54,4 +54,7 @@ public class ConnectionModule {
     public void close() throws IOException{
         this.socket.close();
     }
+    public String getAddress(){
+        return address + ":" + port;
+    }
 }

@@ -32,7 +32,7 @@ public class ModifiedBully extends AbstractAlgorithm{
                     System.out.println("[ \u001B[36mModifiedBully\u001B[0m ] Sending election notice to \"" + s + "\"");
                     connection = new ConnectionModule(s);
                     connection.send("g" + trader.self());
-                    connection.receive(10000);
+                    connection.receive(Experiment.LONG_DELAY);
                     if(highest == null)
                         highest = s;
                     else if(ModifiedBully.determine_value(highest) < ModifiedBully.determine_value(s))

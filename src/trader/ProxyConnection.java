@@ -10,6 +10,7 @@ public class ProxyConnection extends Thread{
     ConnectionModule connection;
     Trader trader;
     public ProxyConnection(Trader trader, Socket socket, ProxyServer proxy_server) throws IOException{
+        socket.setSoTimeout(Experiment.LONG_DELAY);
         this.socket = socket;
         this.proxy_server = proxy_server;
         this.trader = trader;
