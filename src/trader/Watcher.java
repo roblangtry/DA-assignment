@@ -116,10 +116,10 @@ public class Watcher  extends Thread{
                         reading = false;
                         break;
                     case 'e': //election message
-                        System.out.println("[ \u001B[36mwatcher\u001B[0m ][ \u001B[33melection\u001B[0m ] Received an election request from " + message + " -- denying");
+                        System.out.println("[ \u001B[36Election\u001B[0m ] Received an election request from " + message + " -- denying");
                         connection.send("D"); //deny the lower process
                         connection.close();
-                        System.out.println("[ \u001B[36mwatcher\u001B[0m ][ \u001B[33melection\u001B[0m ] Initiating own election message round");
+                        System.out.println("[ \u001B[36Election\u001B[0m ] Initiating own election message round");
                         new Bully().selectNewHost(this.trader);
                         // send own election propaganda
                         // reading = false;

@@ -52,7 +52,7 @@ public class ClientThread extends Thread {
         int quantity;
         ListEntry[] list;
         int val;
-        System.out.println("[ \u001B[36minternal\u001B[0m ] Accepting commands from " + this.username);
+        // System.out.println("[ \u001B[36minternal\u001B[0m ] Accepting commands from " + this.username);
         while(this.running){
             input = this.in.read();
             if(input == -1) throw new IOException();
