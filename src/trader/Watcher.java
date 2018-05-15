@@ -170,7 +170,7 @@ public class Watcher  extends Thread{
                         connection.sendRedirect();
                         break;
                     case 'c': //Co-ordinator message
-                        System.out.println("[ \u001B[36mwatcher\u001B[0m ][ \u001B[33mcordinate\u001B[0m ] Received a Coordination request to move to " + message);
+                        System.out.println("[ \u001B[36mwatcher\u001B[0m ][ \u001B[33mcoordinate\u001B[0m ] Received a Coordination request to move to " + message);
                         trader.relocate(message);
                         reading = false;
                         break;
