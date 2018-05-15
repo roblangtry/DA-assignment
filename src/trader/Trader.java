@@ -642,7 +642,7 @@ public class Trader implements ITrader{
     this.connection.shutoff();
     // System.out.println("[ \u001B[36minternal\u001B[0m ][ \u001B[33mdowngrade\u001B[0m ]");
    }
-   public boolean coord(){
+   public boolean isLeader(){
     return !this.remote;
    }
    public void relocate(String server) throws IOException{

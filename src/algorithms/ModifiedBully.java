@@ -48,7 +48,7 @@ public class ModifiedBully extends AbstractAlgorithm{
                 }
             }
         }
-        if(denials == 0 && trader.coord() == false){
+        if(denials == 0 && trader.isLeader() == false){
             try{
                 trader.upgrade();
             } catch (IOException e){

@@ -94,7 +94,7 @@ public class EnhancedBully extends AbstractAlgorithm{
             }
             return;
         }
-        if(denials == 0 && trader.coord() == false){
+        if(denials == 0 && trader.isLeader() == false){
             try{
                 trader.upgrade();
             } catch (IOException e){
