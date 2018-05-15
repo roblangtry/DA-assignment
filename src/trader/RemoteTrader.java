@@ -8,13 +8,11 @@ public class RemoteTrader implements ITrader {
     private ConnectionModule connection;
     private Trader trader;
     private Watcher watcher;
-    private AbstractAlgorithm algorithm;
     public RemoteTrader(Trader trader, ConnectionModule conn_module, int serverport) throws IOException{
         String connect_message;
         String addr;
         int port;
         boolean hope = true;
-        this.algorithm = new EnhancedBully();
         this.connection = conn_module;
         this.trader = trader;
         this.watcher = new Watcher(trader,serverport);
@@ -224,7 +222,7 @@ public class RemoteTrader implements ITrader {
         return balance;
     }
     public void handleFailure() throws TraderException{
-        this.algorithm.selectNewHost(this.trader);
+        Experiment.FAILURE_ALGORITHM.selectNewHost(this.trader);
         throw new TraderException();
     }
    public void relocate(String server) throws IOException{

@@ -9,17 +9,16 @@ public class MarketLoop extends Thread {
     public MarketLoop(Trader trader){
         this.trader = trader;
         this.running = true;
-        this.algorithm = new ChangRoberts();
     }
     public void run() {
         while(running){
             try {
                 Thread.sleep(this.delay);
                 trader.price_update();
-                this.algorithm.selectNewHost(this.trader);
+                if(Experiment.PERIODIC_ELECTIONS) Experiment.PERIODIC_ALGORITHM.selectNewHost(this.trader);
                 Thread.sleep(this.delay);
                 trader.inventory_update();
-                this.algorithm.selectNewHost(this.trader);
+                if(Experiment.PERIODIC_ELECTIONS) Experiment.PERIODIC_ALGORITHM.selectNewHost(this.trader);
             } catch (InterruptedException e){
                 running = false;
             }
