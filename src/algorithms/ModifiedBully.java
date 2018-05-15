@@ -6,11 +6,7 @@ import trader.*;
 public class ModifiedBully extends AbstractAlgorithm{
     public void upgradeHost(Trader trader){
         ConnectionModule connection;
-        try{
-            trader.upgrade();
-        } catch (IOException e){
-            return;
-        }
+        super.upgradeHost(trader);
         for(String s : trader.getServers()){
             if(ModifiedBully.determine_value(s) < ModifiedBully.determine_value(trader.self())){
                 try{
@@ -73,6 +69,7 @@ public class ModifiedBully extends AbstractAlgorithm{
                 connection.send("G" + trader.self());
                 connection.close();
             } catch (IOException e){
+                // If we couldn't connect to the new leader to inform them call another election to ensure we have a leader.
                 this.selectNewHost(trader);
             }
         }

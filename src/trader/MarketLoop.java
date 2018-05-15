@@ -15,10 +15,10 @@ public class MarketLoop extends Thread {
             try {
                 Thread.sleep(this.delay);
                 trader.price_update();
-                if(Experiment.PERIODIC_ELECTIONS) Experiment.PERIODIC_ALGORITHM.selectNewHost(this.trader);
+                if(Experiment.PERIODIC_ELECTIONS) Experiment.PERIODIC_ALGORITHM.callElection(this.trader);
                 Thread.sleep(this.delay);
                 trader.inventory_update();
-                if(Experiment.PERIODIC_ELECTIONS) Experiment.PERIODIC_ALGORITHM.selectNewHost(this.trader);
+                if(Experiment.PERIODIC_ELECTIONS) Experiment.PERIODIC_ALGORITHM.callElection(this.trader);
             } catch (InterruptedException e){
                 running = false;
             }

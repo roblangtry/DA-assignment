@@ -7,9 +7,15 @@ public class Watcher  extends Thread{
     ServerSocket server;
     Trader trader;
     boolean running;
-    public Watcher(Trader trader, int host_port) throws IOException{
-        this.server = new ServerSocket(host_port);
-        this.server.setSoTimeout(10000);
+    public Watcher(Trader trader, int hostPort) throws IOException{
+        this.server = new ServerSocket(hostPort);
+        this.server.setSoTimeout(Experiment.SERVER_REFRESH_RATE);
+        this.trader = trader;
+        this.running = true;
+    }
+    public Watcher(Trader trader, ServerSocket serverSocket) throws IOException{
+        this.server = serverSocket;
+        this.server.setSoTimeout(Experiment.SERVER_REFRESH_RATE);
         this.trader = trader;
         this.running = true;
     }
@@ -27,6 +33,10 @@ public class Watcher  extends Thread{
                 this.running = false;
             }
         }
+    }
+    public ProxyServer convert() throws IOException{
+        this.running = false;
+        return new ProxyServer(this.trader, this.server);
     }
     public void shutoff(){
         this.running = false;
@@ -120,7 +130,7 @@ public class Watcher  extends Thread{
                         connection.send("D"); //deny the lower process
                         connection.close();
                         System.out.println("[ \u001B[36Election\u001B[0m ] Initiating own election message round");
-                        new Bully().selectNewHost(this.trader);
+                        new Bully().callElection(this.trader);
                         // send own election propaganda
                         // reading = false;
                         break;

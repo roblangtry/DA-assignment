@@ -74,14 +74,16 @@ public class ProxyConnection extends Thread{
                     connection.send("D"); //deny the lower process
                     connection.close();
                     System.out.println("[ \u001B[36mwatcher\u001B[0m ][ \u001B[33melection\u001B[0m ] Initiating own election message round");
-                    new Bully().selectNewHost(this.trader);
+                    new Bully().callElection(this.trader);
+                    break;
                 case 'q':
                     servers = trader.getServers();
                     target = Arrays.asList(servers).indexOf(trader.self()) - 1;
                     if(target == -1)
                         target = servers.length - 1;
                     System.out.println("[ \u001B[36mChangRoberts\u001B[0m ] Receiving ring probe from \"" + message.split("~")[0] + "\"");
-                    if(message.split("~")[1].equals(this.trader.self())){
+                    System.out.println("MSG: " + message);
+                    if(message.split("~").length >= 2 && message.split("~")[1].equals(this.trader.self())){
                         System.out.println("[ \u001B[36mChangRoberts\u001B[0m ] Sending ring target to \"" + servers[target] + "\"");
                         connection = new ConnectionModule(servers[target]);
                         connection.send("Q" + trader.self()+"~"+trader.self());

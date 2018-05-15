@@ -8,11 +8,7 @@ import java.util.*;
 public class EnhancedBully extends AbstractAlgorithm{
     public void upgradeHost(Trader trader){
         ConnectionModule connection;
-        try{
-            trader.upgrade();
-        } catch (IOException e){
-            return;
-        }
+        super.upgradeHost(trader);
         for(String s : trader.getServers()){
             if(ModifiedBully.determine_value(s) < ModifiedBully.determine_value(trader.self())){
                 try{

@@ -42,7 +42,6 @@ public class Bully extends AbstractAlgorithm{
                     }
                     try {
                         message = connection.receive();
-                        System.out.println("message -> " + message);
                     } catch(IOException e){
                         System.out.println("[ \u001B[36mBully\u001B[0m ] Error receiving message from \"" + server + "\"");
                         // if there has been an error then the node is down remove it from the list

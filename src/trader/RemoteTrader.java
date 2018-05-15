@@ -9,7 +9,7 @@ public class RemoteTrader implements ITrader {
     private Trader trader;
     private Watcher watcher;
     public RemoteTrader(Trader trader, ConnectionModule conn_module, int serverport) throws IOException{
-        String connect_message;
+        String connectMessage;
         String addr;
         int port;
         boolean hope = true;
@@ -21,14 +21,14 @@ public class RemoteTrader implements ITrader {
             hope = false;
             this.connection.send("C");
             // System.out.println("[ \u001B[36minternal\u001B[0m ] Sent connection message waiting for reply");
-            connect_message = this.connection.receive();
-            if(connect_message.charAt(0) == 'C'){
+            connectMessage = this.connection.receive();
+            if(connectMessage.charAt(0) == 'C'){
                 // System.out.println("[ \u001B[36minternal\u001B[0m ] Reply successful, remote trader connection routine beginning");
                 this.connection.send(trader.self());
                 // System.out.println("[ \u001B[36minternal\u001B[0m ] Remote trader connection established");
-            } else if(connect_message.charAt(0) == 'R'){
-                addr = connect_message.substring(1).split("~")[0];
-                port = Integer.parseInt(connect_message.substring(1).split("~")[1]);
+            } else if(connectMessage.charAt(0) == 'R'){
+                addr = connectMessage.substring(1).split("~")[0];
+                port = Integer.parseInt(connectMessage.substring(1).split("~")[1]);
                 // System.out.println("[ \u001B[36minternal\u001B[0m ] Received a redirect now attempting connection to " +addr + ":" + port);
                 this.connection.send("E");
                 this.connection.close();
@@ -38,8 +38,14 @@ public class RemoteTrader implements ITrader {
         }
 
     }
+    public ProxyServer convertProxy() throws IOException{
+      ProxyServer proxy = this.watcher.convert();
+      this.watcher = null;
+      return proxy;
+    }
     public void shutoff(){
-        this.watcher.shutoff();
+        if(this.watcher != null)
+            this.watcher.shutoff();
         try{
             this.connection.close();
         } catch(IOException e){
@@ -222,7 +228,7 @@ public class RemoteTrader implements ITrader {
         return balance;
     }
     public void handleFailure() throws TraderException{
-        Experiment.FAILURE_ALGORITHM.selectNewHost(this.trader);
+        Experiment.FAILURE_ALGORITHM.callElection(this.trader);
         throw new TraderException();
     }
    public void relocate(String server) throws IOException{

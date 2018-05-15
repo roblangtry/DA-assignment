@@ -38,7 +38,7 @@ public class Trader implements ITrader{
       }
       this.remote = false;
       this.serverport = serverport;
-      this.setup_proxy();
+      this.setupProxy();
       this.inventory_semaphore = new Semaphore(1);
       this.accounts_semaphore = new Semaphore(1);
       this.user_inventory_semaphore = new Semaphore(1);
@@ -69,7 +69,11 @@ public class Trader implements ITrader{
       }
       // Setup a main server
     }
-    public void setup_proxy() throws IOException{
+    public void convertProxy() throws IOException{
+      this.connection = this.remote_trader.convertProxy();
+      this.connection.start();
+    }
+    public void setupProxy() throws IOException{
       this.connection = new ProxyServer(this, this.serverport);
       this.connection.start();
     }
@@ -607,6 +611,7 @@ public class Trader implements ITrader{
     if(!remote) return;
     //do upgrade
     this.remote = false;
+    // ensure all semaphores are collected
     try {
       this.inventory_semaphore.acquire();
       this.accounts_semaphore.acquire();
@@ -617,10 +622,11 @@ public class Trader implements ITrader{
     } catch( InterruptedException e){
       //do something i guess?
     }
-    //kill watcher
+    // convert watcher
+    this.convertProxy();
+    //kill remote_trader
     this.remote_trader.shutoff();
     //start market loop
-    this.setup_proxy();
     this.loop = new MarketLoop(this);
     this.loop.start();
     //swer
@@ -664,19 +670,19 @@ public class Trader implements ITrader{
    public void election(char type){
       switch(type){
         case 'B':
-          new Bully().selectNewHost(this);
+          new Bully().callElection(this);
           break;
         case 'M':
-          new ModifiedBully().selectNewHost(this);
+          new ModifiedBully().callElection(this);
           break;
         case 'E':
-          new EnhancedBully().selectNewHost(this);
+          new EnhancedBully().callElection(this);
           break;
         case 'C':
-          new ChangRoberts().selectNewHost(this);
+          new ChangRoberts().callElection(this);
           break;
         case 'F':
-          // new Franklin().selectNewHost(this);
+          // new Franklin().callElection(this);
           break;
       }
    }

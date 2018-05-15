@@ -1,6 +1,7 @@
 package trader;
 import java.io.*;
 import java.net.*;
+import algorithms.*;
 
 public class ConnectionModule {
     Socket socket;
@@ -33,17 +34,22 @@ public class ConnectionModule {
     public void send(String message) throws IOException{
         writer.println(message);
         writer.flush();
+        if(Experiment.DEBUG_CONNECTIONS) System.out.println("[DEBUG] Sent \"" + message + "\" to " + address + ":" + port);
 
     }
     public void sendRedirect() throws IOException{
         this.send("R" + this.address + "~" + this.port);
     }
     public String receive() throws IOException{
-        return reader.readLine();
+        String message = reader.readLine();
+        if(Experiment.DEBUG_CONNECTIONS) System.out.println("[DEBUG] Received \"" + message + "\" from " + address + ":" + port);
+        return message;
     }
     public String receive(int time) throws IOException{
         this.socket.setSoTimeout(time);
-        return reader.readLine();
+        String message = reader.readLine();
+        if(Experiment.DEBUG_CONNECTIONS) System.out.println("[DEBUG] Received \"" + message + "\" from " + address + ":" + port);
+        return message;
     }
     public void close() throws IOException{
         this.socket.close();
