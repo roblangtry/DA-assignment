@@ -1,3 +1,13 @@
+Election Trading System showcasing election algorithms
+    Distributed Algorithms Assignment
+        May 2018
+
+Authors:
+    * Kai Huang
+    * Ryan Henderson
+    * Khanh Nguyen Tan
+    * Robert Langtry
+
 To compile client:
     Run `make client'
 
