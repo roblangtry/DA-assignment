@@ -44,6 +44,7 @@ public class ProxyConnection extends Thread{
                 case '<':
                     if(!franklinRight)System.out.println("[ \u001B[36mFranklin\u001B[0m ] Received left probe");
                     if(message.equals(trader.self())){
+                        System.out.println("[ \u001B[36mFranklin\u001B[0m ] Won election");
                         if(!franklinRight)System.out.println("[ \u001B[36mFranklin\u001B[0m ] Sending left coordination to \"" + Franklin.getLeft(trader) + "\"");
                         connection = new ConnectionModule(Franklin.getLeft(trader));
                         connection.send("(" + trader.self());
@@ -85,6 +86,7 @@ public class ProxyConnection extends Thread{
                 case '>':
                     if(!franklinLeft)System.out.println("[ \u001B[36mFranklin\u001B[0m ] Received right probe");
                     if(message.equals(trader.self())){
+                        System.out.println("[ \u001B[36mFranklin\u001B[0m ] Won election");
                         connection = new ConnectionModule(Franklin.getRight(trader));
                         if(!franklinLeft)System.out.println("[ \u001B[36mFranklin\u001B[0m ] Sending right coordination to \"" + Franklin.getRight(trader) + "\"");
                         connection.send("(" + trader.self());
@@ -130,35 +132,37 @@ public class ProxyConnection extends Thread{
                     running = true;
                     break;
                 case 'c': //Co-ordinator message
-                    System.out.println("[ \u001B[36mwatcher\u001B[0m ][ \u001B[33mcordinate\u001B[0m ] Received a Coordination request to move to " + message);
+                    System.out.println("[ \u001B[36mElection\u001B[0m ] Received a Coordination request to move to " + message);
                     trader.downgrade();
                     trader.relocate(message);
                     break;
                 case 'g': //election message
-                    System.out.println("[ \u001B[36mwatcher\u001B[0m ][ \u001B[33melection\u001B[0m ] Received a modified election request from " + message + " -- denying");
+                    System.out.println("[ \u001B[36mModifiedBully\u001B[0m ] Received a modified election request from " + message + " -- denying");
                     connection.send("D"); //deny the lower process
                     connection.close();
                     // send own election propaganda
                     // reading = false;
                     break;
                 case 'G':
-                    System.out.println("[ \u001B[36mwatcher\u001B[0m ][ \u001B[33melection\u001B[0m ] Received a GRANT from " + message);
+                    System.out.println("[ \u001B[36mModifiedBully\u001B[0m ] Won election");
+                    System.out.println("[ \u001B[36mModifiedBully\u001B[0m ] Received a GRANT from " + message);
                     break;
                 case 'n': //election message
-                    System.out.println("[ \u001B[36mwatcher\u001B[0m ][ \u001B[33melection\u001B[0m ] Received an enhanced election request from " + message + " -- denying");
+                    System.out.println("[ \u001B[36mEnhancedBully\u001B[0m ] Received an enhanced election request from " + message + " -- denying");
                     connection.send("D"); //deny the lower process
                     connection.close();
                     // send own election propaganda
                     // reading = false;
                     break;
                 case 'N':
-                    System.out.println("[ \u001B[36mwatcher\u001B[0m ][ \u001B[33melection\u001B[0m ] Received a Enhanced Victory notice from " + message);
+                    System.out.println("[ \u001B[36mEnhancedBully\u001B[0m ] Won election");
+                    System.out.println("[ \u001B[36mEnhancedBully\u001B[0m ] Received a Enhanced Victory notice from " + message);
                     break;
                 case 'e': //election message
-                    System.out.println("[ \u001B[36mwatcher\u001B[0m ][ \u001B[33melection\u001B[0m ] Received an election request from " + message + " -- denying");
+                    System.out.println("[ \u001B[Bully\u001B[0m ] Received an election request from " + message + " -- denying");
                     connection.send("D"); //deny the lower process
                     connection.close();
-                    System.out.println("[ \u001B[36mwatcher\u001B[0m ][ \u001B[33melection\u001B[0m ] Initiating own election message round");
+                    System.out.println("[ \u001B[Bully\u001B[0m ] Initiating own election message round");
                     new Bully().callElection(this.trader);
                     break;
                 case 'q':
@@ -168,6 +172,7 @@ public class ProxyConnection extends Thread{
                         target = servers.length - 1;
                     System.out.println("[ \u001B[36mChangRoberts\u001B[0m ] Receiving ring probe from \"" + message.split("~")[0] + "\"");
                     if(message.split("~").length >= 2 && message.split("~")[1].equals(this.trader.self())){
+                        System.out.println("[ \u001B[36mChangRoberts\u001B[0m ] Won election");
                         // only update others target if we are not currently the leader
                         if(!this.trader.isLeader()){
                             System.out.println("[ \u001B[36mChangRoberts\u001B[0m ] Sending ring target to \"" + servers[target] + "\"");
