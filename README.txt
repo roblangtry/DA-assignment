@@ -5,7 +5,7 @@ Election Trading System showcasing election algorithms
 Authors:
     * Kai Huang
     * Ryan Henderson
-    * Khanh Nguyen Tan
+    * Khanh Tan Nguyen
     * Robert Langtry
 
 To compile client:
