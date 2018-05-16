@@ -1,5 +1,4 @@
 package algorithms;
-//from ;ecture slides
 import java.io.*;
 import java.net.*;
 import trader.*;

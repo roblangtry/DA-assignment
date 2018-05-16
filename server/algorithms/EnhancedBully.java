@@ -1,6 +1,5 @@
 
 package algorithms;
-//from http://www.mdpi.com/2073-431X/1/1/3
 import java.io.*;
 import java.net.*;
 import trader.*;

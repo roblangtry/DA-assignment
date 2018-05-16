@@ -1,5 +1,4 @@
 package algorithms;
-//from project description
 import java.io.*;
 import java.net.*;
 import java.util.*;

@@ -1,5 +1,4 @@
 package algorithms;
-//Modified Bully algorithm by M.S. Kordafshari et al -- https://arxiv.org/ftp/arxiv/papers/1010/1010.1812.pdf
 import java.io.*;
 import java.net.*;
 import trader.*;

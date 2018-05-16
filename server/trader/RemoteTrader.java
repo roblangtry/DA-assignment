@@ -27,7 +27,7 @@ public class RemoteTrader implements ITrader {
                 this.connection.send(trader.self());
                 // System.out.println("[ \u001B[36minternal\u001B[0m ] Remote trader connection established");
             } else if(connectMessage.charAt(0) == 'R'){
-                System.out.println("[ \u001B[36minternal\u001B[0m ] Received a redirect now attempting connection to " +connectMessage);
+                System.out.println("[ \u001B[36minternal\u001B[0m ] Received a redirect now attempting connection to " +connectMessage.substring(1));
                 this.connection.send("E");
                 this.connection.close();
                 this.connection = new ConnectionModule(connectMessage.substring(1));

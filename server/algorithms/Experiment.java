@@ -8,6 +8,6 @@ public abstract class Experiment{
                                                         // valued address than existing leader
     public static boolean DEBUG_CONNECTIONS = false; // Turn on various debug messages
     public static AbstractAlgorithm FAILURE_ALGORITHM = new Bully(); // Algorithms for when node failures are detected
-    public static AbstractAlgorithm PERIODIC_ALGORITHM = new EnhancedBully(); // Algorithm for periodic elections
+    public static AbstractAlgorithm PERIODIC_ALGORITHM = new Franklin(); // Algorithm for periodic elections
     public static AbstractAlgorithm CONNECTION_ALGORITHM = new ChangRoberts(); // Algorithm for on connect elections
 }

@@ -1,5 +1,4 @@
 package algorithms;
-//from http://www.cas.mcmaster.ca/borzoo/teaching/15/CAS769/lectures/week4.pdf
 import java.io.*;
 import java.net.*;
 import java.util.*;
