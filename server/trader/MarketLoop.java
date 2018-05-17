@@ -3,7 +3,7 @@ package trader;
 import algorithms.*;
 public class MarketLoop extends Thread {
     private Trader trader;
-    private static final int delay = 10000;
+    private static final int delay = Experiment.MARKET_DELAY;
     private boolean running;
     private AbstractAlgorithm algorithm;
     public MarketLoop(Trader trader){
