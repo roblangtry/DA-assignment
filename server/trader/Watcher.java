@@ -11,6 +11,8 @@ public class Watcher  extends Thread{
     private boolean electionPossible;
     private boolean franklinRight; // last minute hack to hide extra messages will fix!
     private boolean franklinLeft; // last minute hack to hide extra messages will fix!
+    private String fRight; // last minute hack to hide extra messages will fix!
+    private String fLeft; // last minute hack to hide extra messages will fix!
     public Watcher(Trader trader, int hostPort) throws IOException{
         this.server = new ServerSocket(hostPort);
         this.server.setSoTimeout(Experiment.SERVER_REFRESH_RATE);
@@ -88,10 +90,10 @@ public class Watcher  extends Thread{
                 switch(command){
                     case '<':
                         this.franklinLeft = true;
-                        if(!this.franklinRight)System.out.println("[ \u001B[36mFranklin\u001B[0m ] Received left probe");
+                        System.out.println("[ \u001B[36mFranklin\u001B[0m ] Received left probe");
                         if(message.equals(trader.self())){
                             System.out.println("[ \u001B[36mFranklin\u001B[0m ] Won election");
-                            if(!this.franklinRight)System.out.println("[ \u001B[36mFranklin\u001B[0m ] Sending left coordination to \"" + Franklin.getLeft(trader) + "\"");
+                            System.out.println("[ \u001B[36mFranklin\u001B[0m ] Sending left coordination to \"" + Franklin.getLeft(trader) + "\"");
                             connection = new ConnectionModule(Franklin.getLeft(trader));
                             connection.send("(" + trader.self());
                             connection.close();
@@ -99,25 +101,54 @@ public class Watcher  extends Thread{
                         }
                         else
                         {
-                            if(Franklin.determine_value(message) < Franklin.determine_value(trader.self())){
-                            if(!this.franklinRight)System.out.println("[ \u001B[36mFranklin\u001B[0m ] Sending left probe to \"" + Franklin.getLeft(trader) + "\"");
+                            if(this.franklinRight){
+                                connection = new ConnectionModule(Franklin.getLeft(trader));
+                                System.out.println("[ \u001B[36mFranklin\u001B[0m ] Sending left coordination to \"" + Franklin.getLeft(trader) + "\"");
+                                if(Franklin.determine_value(message) < Franklin.determine_value(this.fRight)){
+                                    connection.send(")" + this.fRight);
+                                    if(trader.self().equals(this.fRight)) {
+                                        System.out.println("[ \u001B[36mFranklin\u001B[0m ] Won election");
+                                        new Franklin().upgradeHost(this.trader);
+                                    }
+                                    else{
+                                        if(trader.isLeader()) trader.downgrade();
+                                        trader.relocate(this.fRight);
+                                    }
+                                } else {
+                                    connection.send(")" + message);
+                                    if(trader.self().equals(message)) {
+                                        System.out.println("[ \u001B[36mFranklin\u001B[0m ] Won election");
+                                        new Franklin().upgradeHost(this.trader);
+                                    }
+                                    else{
+                                        if(trader.isLeader()) trader.downgrade();
+                                        trader.relocate(message);
+                                    }
+                                }
+                                connection.close();
+                            }
+                            else if(Franklin.determine_value(message) < Franklin.determine_value(trader.self())){
+                                System.out.println("[ \u001B[36mFranklin\u001B[0m ] Sending left probe to \"" + Franklin.getLeft(trader) + "\"");
                                 connection = new ConnectionModule(Franklin.getLeft(trader));
                                 connection.send("<" + trader.self());
                                 connection.close();
+                                this.fLeft = trader.self();
                             }
                             else {
-                            if(!this.franklinRight)System.out.println("[ \u001B[36mFranklin\u001B[0m ] Sending left probe to \"" + Franklin.getLeft(trader) + "\"");
+                                System.out.println("[ \u001B[36mFranklin\u001B[0m ] Sending left probe to \"" + Franklin.getLeft(trader) + "\"");
                                 connection = new ConnectionModule(Franklin.getLeft(trader));
                                 connection.send("<" + message);
                                 connection.close();
+                                this.fLeft = message;
                             }
                         }
                         break;
                     case '(':
+                        this.franklinRight = false;
                         this.franklinLeft = false;
                         System.out.println("[ \u001B[36mFranklin\u001B[0m ] Received left coordination");
                         if(message.equals(trader.self())){
-                            //election finished
+                            new Franklin().upgradeHost(this.trader);
                         } else {
                             connection = new ConnectionModule(Franklin.getLeft(trader));
                             connection.send("(" + message);
@@ -128,36 +159,65 @@ public class Watcher  extends Thread{
                         break;
                     case '>':
                         this.franklinRight = true;
-                        if(!this.franklinLeft)System.out.println("[ \u001B[36mFranklin\u001B[0m ] Received right probe");
+                        System.out.println("[ \u001B[36mFranklin\u001B[0m ] Received right probe");
                         if(message.equals(trader.self())){
                             System.out.println("[ \u001B[36mFranklin\u001B[0m ] Won election");
                             connection = new ConnectionModule(Franklin.getRight(trader));
-                            if(!this.franklinLeft)System.out.println("[ \u001B[36mFranklin\u001B[0m ] Sending right coordination to \"" + Franklin.getRight(trader) + "\"");
+                            System.out.println("[ \u001B[36mFranklin\u001B[0m ] Sending right coordination to \"" + Franklin.getRight(trader) + "\"");
                             connection.send(")" + trader.self());
                             connection.close();
                             new Franklin().upgradeHost(this.trader);
                         }
                         else
                         {
-                            if(Franklin.determine_value(message) < Franklin.determine_value(trader.self())){
-                            if(!this.franklinLeft)System.out.println("[ \u001B[36mFranklin\u001B[0m ] Sending right probe to \"" + Franklin.getRight(trader) + "\"");
+                            if(this.franklinLeft){
+                                connection = new ConnectionModule(Franklin.getRight(trader));
+                                System.out.println("[ \u001B[36mFranklin\u001B[0m ] Sending right coordination to \"" + Franklin.getRight(trader) + "\"");
+                                if(Franklin.determine_value(message) < Franklin.determine_value(this.fLeft)){
+                                    connection.send(")" + this.fLeft);
+                                    if(trader.self().equals(this.fLeft)) {
+                                        System.out.println("[ \u001B[36mFranklin\u001B[0m ] Won election");
+                                        new Franklin().upgradeHost(this.trader);
+                                    }
+                                    else{
+                                        if(trader.isLeader()) trader.downgrade();
+                                        trader.relocate(this.fLeft);
+                                    }
+                                } else {
+                                    connection.send(")" + message);
+                                    if(trader.self().equals(message)) {
+                                        System.out.println("[ \u001B[36mFranklin\u001B[0m ] Won election");
+                                        new Franklin().upgradeHost(this.trader);
+                                    }
+                                    else{
+                                        if(trader.isLeader()) trader.downgrade();
+                                        trader.relocate(message);
+                                    }
+                                }
+                                connection.close();
+                            }
+                            else if(Franklin.determine_value(message) < Franklin.determine_value(trader.self())){
+                                System.out.println("[ \u001B[36mFranklin\u001B[0m ] Sending right probe to \"" + Franklin.getRight(trader) + "\"");
                                 connection = new ConnectionModule(Franklin.getRight(trader));
                                 connection.send(">" + trader.self());
                                 connection.close();
+                                this.fRight = trader.self();
                             }
                             else {
-                            if(!this.franklinLeft)System.out.println("[ \u001B[36mFranklin\u001B[0m ] Sending right probe to \"" + Franklin.getRight(trader) + "\"");
+                                System.out.println("[ \u001B[36mFranklin\u001B[0m ] Sending right probe to \"" + Franklin.getRight(trader) + "\"");
                                 connection = new ConnectionModule(Franklin.getRight(trader));
                                 connection.send(">" + message);
                                 connection.close();
+                                this.fRight = message;
                             }
                         }
                         break;
                     case ')':
                         this.franklinRight = false;
+                        this.franklinLeft = false;
                         System.out.println("[ \u001B[36mFranklin\u001B[0m ] Received right coordination");
                         if(message.equals(trader.self())){
-                            //election finished
+                            new Franklin().upgradeHost(this.trader);
                         } else {
                             connection = new ConnectionModule(Franklin.getRight(trader));
                             System.out.println("[ \u001B[36mFranklin\u001B[0m ] Sending right coordination to \"" + Franklin.getRight(trader) + "\"");
