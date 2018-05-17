@@ -23,6 +23,7 @@ public abstract class AbstractAlgorithm{
         }
     }
     public static int determine_value(String serverAddress){
+        if(serverAddress == null || serverAddress.split(":").length < 2) return -1;
         int value = 0;
         String ip = serverAddress.split(":")[0];
         int port = Integer.parseInt(serverAddress.split(":")[1]);
